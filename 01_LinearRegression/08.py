@@ -13,7 +13,6 @@ Created on Mon Apr  4 22:22:25 2022
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from sympy import symbols, Eq, solve
 
 ########### 훈련 데이터 ###########
 raw_data = pd.read_csv('lin_regression_data_01.csv', names=['months', 'height'])
@@ -22,13 +21,9 @@ x = raw_data['months'].values
 y = raw_data['height'].values
 
 ########### 해석해 회귀모델 ###########
-w0, w1 = symbols('w0 w1')
-eqn_w0 = Eq((x*((w0*x + w1) -y)).mean(), 0)
-eqn_w1 = Eq(((w0*x + w1) -y).mean(), 0)
-answer = solve([eqn_w0, eqn_w1])
-w0 = answer[w0]
-w1 = answer[w1]
-y_hat = w0*x + w1
+X = np.c_[x, np.ones(x.shape)]
+w = np.linalg.inv(np.transpose(X)@X)@np.transpose(X)@y
+y_hat = w[0]*x + w[1]
 
 ########### GDM 회귀모델 ###########
 def GDM(x, y, lr, epochs):

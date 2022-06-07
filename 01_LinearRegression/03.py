@@ -10,22 +10,17 @@ Created on Tue Mar 29 16:21:13 2022
 # 필수요소: x축, y축 이름, grid, legend
 # 결과물: 그래프
 
-
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sympy import symbols, Eq, solve
 
 raw_data = pd.read_csv('lin_regression_data_01.csv', names=['months', 'height'])
 x = raw_data['months'].values
 y = raw_data['height'].values
 
-w0, w1 = symbols('w0 w1')
-eqn_w0 = Eq((x*((w0*x + w1) -y)).mean(), 0)
-eqn_w1 = Eq(((w0*x + w1) -y).mean(), 0)
-answer = solve([eqn_w0, eqn_w1])
-w0 = answer[w0]
-w1 = answer[w1]
-y_hat = w0*x + w1
+X = np.c_[x, np.ones(x.shape)]
+w = np.linalg.inv(np.transpose(X)@X)@np.transpose(X)@y
+y_hat = w[0]*x + w[1]
 
 plt.plot(x, y, 'b.', x, y_hat, 'r')
 plt.legend(['y', 'y_hat'])

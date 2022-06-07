@@ -11,16 +11,13 @@ Created on Tue Mar 29 15:16:09 2022
 
 
 import pandas as pd
-from sympy import symbols, Eq, solve
+import numpy as np
 
 raw_data = pd.read_csv('lin_regression_data_01.csv', names=['months', 'height'])
 x = raw_data['months'].values
 y = raw_data['height'].values
 
-w0, w1 = symbols('w0 w1')
-eqn_w0 = Eq((x*((w0*x + w1) -y)).mean(), 0)
-eqn_w1 = Eq(((w0*x + w1) -y).mean(), 0)
-answer = solve([eqn_w0, eqn_w1])
-w0 = answer[w0]
-w1 = answer[w1]
-print('w0 = {}, \nw1 = {}'.format(w0, w1))
+X = np.c_[x, np.ones(x.shape)]
+
+w = np.linalg.inv(np.transpose(X)@X)@np.transpose(X)@y
+print('w0 = {}, \nw1 = {}'.format(w[0], w[1]))
